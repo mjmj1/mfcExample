@@ -172,5 +172,5 @@ void CmfcExamDlg::OnBnClickedDraw()
 {
 	int nRadius = GetDlgItemInt(IDC_NUMBER);
 	CPaintDC dc(this);
-	m_pDlg->drawData(nRadius);
+	m_pDlg->drawCircle(nRadius);
 }

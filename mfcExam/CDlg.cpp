@@ -53,18 +53,74 @@ void CDlg::InitImage()
 	memset(fm, 0xff, nWidth * nHeight);
 }
 
-void CDlg::drawData(int radius)
+void CDlg::UpdateDisplay()
 {
-	cout << radius << endl;
-	int nStartX = m_image.GetWidth() % rand();
-	int nStartY = m_image.GetHeight() % rand();
+	CClientDC dc(this);
+	m_image.Draw(dc, 0, 0);
+	Invalidate();
+}
+
+bool CDlg::isInCircle(int i, int j, int nCenterX, int nCenterY, int nRadius)
+{
+	bool bRet = false;
+
+	double dX = i - nCenterX;
+	double dY = j - nCenterY;
+	double dDist = dX * dX + dY * dY;
+
+	if (dDist < nRadius * nRadius)
+	{
+		bRet = true;
+	}
+
+	return bRet;
+}
+
+void CDlg::drawData(CDC* pDC)
+{
+	CRect rect(m_nStartX, m_nStartY, m_nStartX + m_nRadius * 2, m_nStartY + m_nRadius * 2);
+
+	pDC->MoveTo(m_nStartX + m_nRadius - 3, m_nStartY + m_nRadius);
+	pDC->LineTo(m_nStartX + m_nRadius + 3, m_nStartY + m_nRadius);
+	pDC->MoveTo(m_nStartX + m_nRadius, m_nStartY + m_nRadius - 3);
+	pDC->LineTo(m_nStartX + m_nRadius, m_nStartY + m_nRadius + 3);
+
+	CPen pen(PS_SOLID, 2, RGB(255, 255, 0));
+	CPen* oldPen = pDC->SelectObject(&pen);
+	pDC->Ellipse(rect);
+	pDC->SelectObject(oldPen);
+}
+
+void CDlg::drawCircle(int nRadius)
+{
+	//cout << nRadius << endl;
+	int nWidth = m_image.GetWidth();
+	int nHeight = m_image.GetHeight();
 	int nPitch = m_image.GetPitch();
+	m_nRadius = nRadius;
+	m_nStartX = rand() % nWidth;
+	m_nStartY = rand() % nHeight;
+	int nCenterX = m_nStartX + nRadius;
+	int nCenterY = m_nStartY + nRadius;
 	unsigned char* fm = (unsigned char*)m_image.GetBits();
 
-	memset(fm, 0xff, m_image.GetWidth() * m_image.GetHeight());
+	memset(fm, 0xff, nWidth * nHeight);
 
 	CClientDC dc(this);
-	dc.Ellipse(nStartX, nStartY, nStartX + radius, nStartY + radius);
+
+	for (int j = m_nStartY; j < m_nStartY + m_nRadius * 2; j++)
+	{
+		for (int i = m_nStartX; i < m_nStartX + m_nRadius * 2; i++)
+		{
+			if (isInCircle(i, j, nCenterX, nCenterY, m_nRadius))
+			{
+				fm[j * nPitch + i] = 0;
+			}
+		}
+	}
+
+	UpdateDisplay();
+
 }
 
 BOOL CDlg::OnInitDialog()
@@ -80,9 +136,9 @@ BOOL CDlg::OnInitDialog()
 
 void CDlg::OnPaint()
 {
-	CPaintDC dc(this); // device context for painting
-	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-	// 그리기 메시지에 대해서는 CDialogEx::OnPaint()을(를) 호출하지 마십시오.
+	CPaintDC dc(this);
 	if (m_image)
 		m_image.Draw(dc, 0, 0);
+
+	drawData(&dc);
 }

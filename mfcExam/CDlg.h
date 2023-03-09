@@ -15,6 +15,9 @@ public:
 	CWnd* m_pParent;
 	CImage m_image;
 	CPoint m_ptData;
+	int m_nStartX = 0;
+	int m_nStartY = 0;
+	int m_nRadius = 0;
 
 
 // 대화 상자 데이터입니다.
@@ -29,10 +32,12 @@ protected:
 
 private:
 	void InitImage();
-	
+	void UpdateDisplay();
+	bool isInCircle(int i, int j, int nCenterX, int nCenterY, int nRadius);
+	void drawData(CDC* pDC);
 
 public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
-	void drawData(int radius);
+	void drawCircle(int radius);
 };
