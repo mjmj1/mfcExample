@@ -80,15 +80,18 @@ void CDlg::drawData(CDC* pDC)
 {
 	CRect rect(m_nStartX, m_nStartY, m_nStartX + m_nRadius * 2, m_nStartY + m_nRadius * 2);
 
+	CPen pen(PS_SOLID, 2, RGB(255, 255, 0));
+	CBrush brush(RGB(80, 80, 80));
+	CPen* oldPen = pDC->SelectObject(&pen);
+	CBrush* oldBrush = pDC->SelectObject(&brush);
+	pDC->Ellipse(rect);
+	pDC->SelectObject(oldPen);
+	pDC->SelectObject(oldBrush);
+
 	pDC->MoveTo(m_nStartX + m_nRadius - 3, m_nStartY + m_nRadius);
 	pDC->LineTo(m_nStartX + m_nRadius + 3, m_nStartY + m_nRadius);
 	pDC->MoveTo(m_nStartX + m_nRadius, m_nStartY + m_nRadius - 3);
 	pDC->LineTo(m_nStartX + m_nRadius, m_nStartY + m_nRadius + 3);
-
-	CPen pen(PS_SOLID, 2, RGB(255, 255, 0));
-	CPen* oldPen = pDC->SelectObject(&pen);
-	pDC->Ellipse(rect);
-	pDC->SelectObject(oldPen);
 }
 
 void CDlg::drawCircle(int nRadius)
@@ -108,7 +111,7 @@ void CDlg::drawCircle(int nRadius)
 
 	CClientDC dc(this);
 
-	for (int j = m_nStartY; j < m_nStartY + m_nRadius * 2; j++)
+	/*for (int j = m_nStartY; j < m_nStartY + m_nRadius * 2; j++)
 	{
 		for (int i = m_nStartX; i < m_nStartX + m_nRadius * 2; i++)
 		{
@@ -117,7 +120,7 @@ void CDlg::drawCircle(int nRadius)
 				fm[j * nPitch + i] = 0;
 			}
 		}
-	}
+	}*/
 
 	UpdateDisplay();
 
