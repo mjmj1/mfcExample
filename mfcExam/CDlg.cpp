@@ -40,6 +40,11 @@ void CDlg::InitImage()
 	int nBpp = 8;
 
 	m_image.Create(nWidth, -nHeight, nBpp);
+	//m_image.Create(nWidth, nHeight, nBpp);
+
+	CClientDC dc(this);
+	m_image.Draw(dc, 0, 0);
+
 	if (nBpp == 8) {
 		static RGBQUAD rgb[256];
 		for (int i = 0; i < 256; i++)
@@ -48,7 +53,15 @@ void CDlg::InitImage()
 	}
 
 	int nPitch = m_image.GetPitch();
-	unsigned char* fm = (unsigned char*)m_image.GetBits();
+	fm = (unsigned char*)m_image.GetBits();
+
+	/*for (int j = 0; j < nHeight; j++)
+	{
+		for (int i = 0; i < nWidth; i++)
+		{
+			fm[j * nPitch + i] = 255;
+		}
+	}*/
 
 	memset(fm, 0xff, nWidth * nHeight);
 }
@@ -81,9 +94,11 @@ void CDlg::drawData(CDC* pDC)
 	CRect rect(m_nStartX, m_nStartY, m_nStartX + m_nRadius * 2, m_nStartY + m_nRadius * 2);
 
 	CPen pen(PS_SOLID, 2, RGB(255, 255, 0));
-	CBrush brush(RGB(80, 80, 80));
+	CBrush brush;
+	brush.CreateStockObject(NULL_BRUSH);
 	CPen* oldPen = pDC->SelectObject(&pen);
 	CBrush* oldBrush = pDC->SelectObject(&brush);
+
 	pDC->Ellipse(rect);
 	pDC->SelectObject(oldPen);
 	pDC->SelectObject(oldBrush);
@@ -97,6 +112,7 @@ void CDlg::drawData(CDC* pDC)
 void CDlg::drawCircle(int nRadius)
 {
 	//cout << nRadius << endl;
+	int nGray = 80;
 	int nWidth = m_image.GetWidth();
 	int nHeight = m_image.GetHeight();
 	int nPitch = m_image.GetPitch();
@@ -105,22 +121,25 @@ void CDlg::drawCircle(int nRadius)
 	m_nStartY = rand() % nHeight;
 	int nCenterX = m_nStartX + nRadius;
 	int nCenterY = m_nStartY + nRadius;
-	unsigned char* fm = (unsigned char*)m_image.GetBits();
 
-	memset(fm, 0xff, nWidth * nHeight);
+	memset(fm, 0xff, m_nStartX * m_nStartY);
 
 	CClientDC dc(this);
 
-	/*for (int j = m_nStartY; j < m_nStartY + m_nRadius * 2; j++)
+	for (int j = m_nStartY; j < m_nStartY + m_nRadius * 2; j++)
 	{
 		for (int i = m_nStartX; i < m_nStartX + m_nRadius * 2; i++)
 		{
-			if (isInCircle(i, j, nCenterX, nCenterY, m_nRadius))
+			if (i < nWidth && j <= nHeight)
 			{
-				fm[j * nPitch + i] = 0;
+				if (isInCircle(i, j, nCenterX, nCenterY, m_nRadius))
+				{
+					fm[j * nPitch + i] = nGray;
+				}
 			}
+			
 		}
-	}*/
+	}
 
 	UpdateDisplay();
 

@@ -103,7 +103,7 @@ BOOL CmfcExamDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	MoveWindow(0, 0, 640, 640);
+	MoveWindow(0, 0, 655, 640);
 	m_pDlg = new CDlg;
 	m_pDlg->Create(IDD_CDlg, this);
 	m_pDlg->ShowWindow(SW_SHOW);

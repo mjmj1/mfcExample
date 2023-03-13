@@ -18,7 +18,7 @@ public:
 	int m_nStartX = 0;
 	int m_nStartY = 0;
 	int m_nRadius = 0;
-
+	unsigned char* fm = NULL;
 
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
